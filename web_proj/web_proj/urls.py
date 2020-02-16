@@ -20,6 +20,7 @@ from lovely.views import first, second, third
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('posts.urls')),
+    path('', main, name="main"),
     path('lovely/', include('lovely.urls')),
+    path('posts/', include('posts.urls')),
 ]
