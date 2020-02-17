@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Post
+from .forms import PostForm
+import pdb
 
 
 def main(request):
@@ -7,13 +9,15 @@ def main(request):
 
 
 def new(request):
-    return render(request, 'posts/new.html')
+    context = {
+        'form': PostForm()
+    }
+    return render(request, 'posts/new.html',  context)
 
 
 def create(request):
     if request.method == "POST":
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        # Post(title=title, content=content).save()
-        Post.objects.create(title=title, content=content)
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.save()
         return redirect('main')
