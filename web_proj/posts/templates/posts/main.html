@@ -1,11 +1,53 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} {% load static %} {% block content %}
+<div class="container">
+  <h1>
+    INT's Blog
+  </h1>
+  <div class="row">
+    {% for post in posts %}
+    <div class="col-md-4 col-12">
+      <div class="card" style="width: 18rem; margin-top:20px;">
+        <div class="card-body">
+          <h5 class="card-title">{{post.title}}</h5>
+          <p class="card-text">{{post.content}}</p>
+          <p>{{post.created_at}}</p>
+          <a href="{% url 'posts:show' post.id %}" class="btn btn-primary"
+            >Go somewhere</a
+          >
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <br />
+  <ul class="pagination">
+      {% if posts.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ posts.previous_page_number }}">{{ posts.previous_page_number }}</a>
+          </li>
+      {% endif %}
 
-{% block content %}
-<h1>Hello Django</h1>
+      <li class="page-item active" aria-current="page" >
+          <a class="page-link" href="#">{{ posts.number }}</a>
+        </li>
 
-<a href='{%url "lovely:first" %}'> first</a>
-<a href='{%url "lovely:second" %}'> second</a>
-<a href='{%url "lovely:third" %}'> third</a>
+      {% if posts.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.next_page_number }}">{{ posts.next_page_number }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ posts.paginator.num_pages }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+      {% endif %}
+    </span>
+  </div>
+</div>
 
 {% endblock %}
