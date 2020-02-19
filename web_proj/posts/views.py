@@ -63,3 +63,22 @@ def delete(request, post_id):
         post = Post.objects.get(id=post_id)
         post.delete()
         return redirect('main')
+
+
+def search(request):
+    if request.method == "GET":
+        post = Post.objects.all()
+        search_type = request.GET.get('p', '')
+        search_keyword = request.GET.get('keyword', '')
+        if search_type == "title":
+            if search_keyword:
+                post = Post.objects.filter(title__icontains=search_keyword)
+        else:
+            if search_keyword:
+                post = Post.objects.filter(content__icontains=search_keyword)
+        context = {
+            'posts': post,
+            'type': search_type,
+            'keyword': search_keyword
+        }
+        return render(request, 'posts/main.html', context)
