@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-
-from .models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class UserCreationForm(forms.ModelForm):
@@ -12,7 +12,37 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('user_id', 'email', 'date_of_birth', 'phone')
+        fields = ('user_id', 'password1', 'password2',
+                  'email', 'date_of_birth', 'phone')
+        labels = {
+            'user_id': '아이디',
+            'email': '이메일',
+            'date_of_birth': '생년월일',
+            'password1': '비밀번호',
+            'password2': '비밀번호 확인',
+            'phone': '전화번호'
+        }
+        widgets = {
+            'user_id': forms.TextInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'user_id'
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'password1'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'password2'
+            }),
+            'email': forms.TextInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'eamil'
+            }),
+            'date_of_birth': forms.TextInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'date_of_birth'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'password'
+            }),
+
+        }
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -39,3 +69,21 @@ class UserChangeForm(forms.ModelForm):
 
         def clean_password(self):
             return self.inital["password"]
+
+
+class UserLoginForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['user_id', 'password']
+        labels = {
+            'user_id': '아이디',
+            'password': '비밀번호'
+        }
+        widgets = {
+            'user_id': forms.TextInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'user_id'
+            }),
+            'password': forms.TextInput(attrs={
+                'class': 'form-control', 'style': 'width:500px;', 'name': 'password', 'type': 'password'
+            })
+        }
