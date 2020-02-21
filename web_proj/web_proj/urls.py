@@ -23,5 +23,6 @@ urlpatterns = [
     path('', main, name="main"),
     path('lovely/', include('lovely.urls')),
     path('posts/', include('posts.urls')),
+    path('users/', include('users.urls'))
 
 ]
