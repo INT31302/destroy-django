@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, Like
 
 
 @admin.register(Post)
@@ -9,8 +9,14 @@ class PostAdmin(admin.ModelAdmin):
         'title',
         'view_count',
         'created_at',
-        'updated_at'
+        'like_count',
+
     )
     search_fields = (
         'title',
     )
+
+
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ('user',)

@@ -1,8 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 from .models import Post
 from .forms import PostForm
 from django.core.paginator import Paginator
+from django.urls import reverse
 import pdb
+import json
 
 
 def main(request):
@@ -82,3 +87,35 @@ def search(request):
             'keyword': search_keyword
         }
         return render(request, 'posts/main.html', context)
+
+
+@login_required
+@require_POST
+def like(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    post_like, post_like_created = post.like_set.get_or_create(
+        user=request.user)
+
+    print(post_like)
+
+    context = {
+        'like_count': post.like_count
+    }
+    return HttpResponse(json.dumps(context), content_type="application/json")
+
+
+@login_required
+@require_POST
+def unlike(request):
+    pk = request.POST.get('pk', None)
+    post = get_object_or_404(Post, pk=pk)
+    post_unlike, post_unlike_created = post.unlike_set.get_or_create(
+        user=request.user)
+
+    print(post_unlike)
+
+    context = {
+        'unlike_count': post.unlike_count
+    }
+    return HttpResponse(json.dumps(context), content_type="application/json")
