@@ -1,5 +1,6 @@
 from django import forms
 from .models import Post
+from django.conf import settings
 
 
 class PostForm(forms.ModelForm):
@@ -8,7 +9,7 @@ class PostForm(forms.ModelForm):
         fields = ['title', 'content']
         labels = {
             'title': '제목',
-            'content': '내용'
+            'content': '내용',
         }
         widgets = {
             'title': forms.TextInput(attrs={

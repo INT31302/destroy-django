@@ -1,12 +1,13 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth import get_user_model
 
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    # author = models.ForeignKey(
-    #     settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(
+        get_user_model(), related_name="post", on_delete=models.CASCADE)
     view_count = models.IntegerField(default=0)
     like_user_set = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True, related_name="like_user_set", through="Like")

@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.urls import reverse
 import pdb
 import json
+from django.contrib import messages
 
 
 def main(request):
@@ -33,7 +34,9 @@ def create(request):
     if request.method == "POST":
         form = PostForm(request.POST)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
             return redirect('main')
 
 
@@ -47,11 +50,15 @@ def show(request, post_id):
 
 def edit(request, post_id):
     post = Post.objects.get(id=post_id)
-    context = {
-        'post': post,
-        'form': PostForm(instance=post)
-    }
-    return render(request, 'posts/edit.html', context)
+    if post.author == request.user:
+        context = {
+            'post': post,
+            'form': PostForm(instance=post)
+        }
+        return render(request, 'posts/edit.html', context)
+    else:
+        messages.success(request, '작성자가 아닙니다!')
+        return redirect('posts:show', post_id)
 
 
 def update(request, post_id):
@@ -66,8 +73,12 @@ def update(request, post_id):
 def delete(request, post_id):
     if request.method == "POST":
         post = Post.objects.get(id=post_id)
-        post.delete()
-        return redirect('main')
+        if post.author == request.user:
+            post.delete()
+            return redirect('main')
+        else:
+            messages.success(request, '작성자가 아닙니다!')
+            return redirect('posts:show', post_id)
 
 
 def search(request):
