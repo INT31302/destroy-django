@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post
+from .models import Post, Comment
 from django.conf import settings
 
 
@@ -18,4 +18,18 @@ class PostForm(forms.ModelForm):
             'content': forms.Textarea(attrs={
                 'class': 'form-control'
             })
+        }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text', ]
+        labels = {
+            "text": "댓글"
+        }
+        widgets = {
+            "text": forms.Textarea(attrs={
+                'placeholder': '댓글을 입력해주세요',
+                'class': 'form-control', 'rows': 5}),
         }

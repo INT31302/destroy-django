@@ -36,9 +36,8 @@
     {% if user.is_active %}
     <a href='{% url "users:logout" %}' class="btn btn-primary">로그아웃</a>
     {% else %}
+    <a href="{% url 'users:register' %}" class="btn btn-second">회원가입</a>
     <a href='{% url "users:login" %}' class="btn btn-primary">로그인</a>
     {% endif %}
-
-    <a href="{% url 'users:register' %}" class="btn btn-second">회원가입</a>
   </div>
 </nav>

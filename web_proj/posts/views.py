@@ -2,8 +2,8 @@ from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 from django.core.paginator import Paginator
 from django.urls import reverse
 import pdb
@@ -42,8 +42,12 @@ def create(request):
 
 def show(request, post_id):
     post = Post.objects.get(id=post_id)
+    comments = Comment.objects.filter(
+        comment=post_id).order_by('-created_date')
     context = {
-        'post': post
+        'post': post,
+        'form': CommentForm(),
+        'comments': comments
     }
     return render(request, 'posts/show.html', context)
 
@@ -98,6 +102,30 @@ def search(request):
             'keyword': search_keyword
         }
         return render(request, 'posts/main.html', context)
+
+
+@login_required
+@require_POST
+def comment(request, post_id):
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comments = form.save(commit=False)
+            comments.writer = request.user
+            comments.comment = Post.objects.get(pk=post_id)
+            comments.save()
+            return redirect('posts:show', post_id)
+
+
+@login_required
+def comment_delete(request, post_id, comment_id):
+    comment = Comment.objects.get(id=comment_id)
+    if comment.writer == request.user:
+        comment.delete()
+        return redirect('posts:show', post_id)
+    else:
+        messages.success(request, '작성자가 아닙니다!')
+        return redirect('posts:show', post_id)
 
 
 @login_required
